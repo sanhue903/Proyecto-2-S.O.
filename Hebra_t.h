@@ -7,8 +7,11 @@
 
 typedef std::chrono::duration<int,std::milli> millisec;
 
-const millisec CPU_TIME(200);
-const int MIN_TIME{50}, MAX_TIME{300};
+const int NUM_PRIORITY{9};
+
+const millisec CPU_TIME(500);
+
+const int MIN_TIME{100}, MAX_TIME{10000};
 
 class Hebra_t{
     private:
@@ -17,6 +20,8 @@ class Hebra_t{
         int id_process{0};
 
         millisec time_process{MIN_TIME};
+
+        static int count;
 
     public:
         Hebra_t();
@@ -27,7 +32,7 @@ class Hebra_t{
 
         int get_priority();
 
-        int get_id();
+        bool has_finished();
 };
 
 #endif
