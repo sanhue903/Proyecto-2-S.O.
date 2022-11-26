@@ -33,6 +33,10 @@ class Hebra_t{
         int get_priority();
 
         bool has_finished();
+
+        int getID();
+
+        millisec get_time();
 };
 
 #endif

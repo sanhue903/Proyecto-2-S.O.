@@ -35,3 +35,11 @@ int Hebra_t::get_priority(){
 bool Hebra_t::has_finished(){
     return this->time_process.count() <= 0;
 }
+
+int Hebra_t::getID(){
+    return id_process;
+}
+
+millisec Hebra_t::get_time(){
+    return time_process;
+}

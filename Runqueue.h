@@ -14,13 +14,13 @@ struct Compare {
 };
 
 class Runqueue{
+    public:
+        std::mutex mutex_runqueue;
+
     private:
         std::priority_queue<Hebra_t, std::vector<Hebra_t>, Compare> queue;
-
-        std::mutex mutex_runqueue;
     
     public:
-
         void add_process(Hebra_t);
 
         Hebra_t pop_process();
