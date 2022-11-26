@@ -30,13 +30,9 @@ int main(){
 
 void process_scheduler(Runqueue& activa, Runqueue& expirada){
     while(true){
-
-        activa.mutex_runqueue.lock;
-
+        
         while(!activa.is_empty()){
             Hebra_t aux{activa.pop_process()};
-
-            activa.mutex_runqueue.unlock();
 
             aux.run_process();
 
@@ -44,43 +40,14 @@ void process_scheduler(Runqueue& activa, Runqueue& expirada){
                 if (aux.get_priority() < NUM_PRIORITY)
                     aux.change_priority(aux.get_priority() + 1); 
 
-                expirada.mutex_runqueue.lock();
-
                 expirada.add_process(aux);
             }
-
-            
         }
 
-        if (activa.)
-        activa.mutex_runqueue.unlock();
-
-        expirada.mutex_runqueue.lock();
         while(!expirada.is_empty()){
             activa.add_process(expirada.pop_process());
         }
     }
 
 }
-/*
-void process_scheduler(Runqueue& activa, Runqueue& expirada){
-    while(true){
-        while(!activa.is_empty()){
-            Hebra_t aux{activa.pop_process()};
 
-            aux.run_process();
-
-            if (!aux.has_finished()){
-                if (aux.get_priority() < NUM_PRIORITY)
-                    aux.change_priority(aux.get_priority() + 1); 
-
-                expirada.add_process(aux);
-            }
-        }
-
-        while(!expirada.is_empty()){
-            activa.add_process(expirada.pop_process());
-        }
-    }
-
-}*/
