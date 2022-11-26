@@ -4,6 +4,7 @@
 #include "Hebra_t.h"
 #include <queue>
 #include <vector>
+#include <unistd.h>
 #include <mutex>
 
 
@@ -14,17 +15,29 @@ struct Compare {
 };
 
 class Runqueue{
-    private:
-        std::priority_queue<Hebra_t, std::vector<Hebra_t>, Compare> queue;
+private:
+    bool swapped;
+    std::priority_queue<Hebra_t, std::vector<Hebra_t>, Compare> active;
+    std::priority_queue<Hebra_t, std::vector<Hebra_t>, Compare> expired;
 
-        std::mutex mutex_runqueue;
-    
-    public:
-        void add_process(Hebra_t);
+    std::mutex mutex_runqueue;
 
-        Hebra_t pop_process();
+public:
+    Runqueue();
 
-        bool is_empty();
+    void add_process(Hebra_t);
+
+    void add_expired(Hebra_t);
+
+    Hebra_t pop_process();
+
+    bool is_empty();
+
+    bool is_expired_empty();
+
+    int getSize();
+
+    void swap();
 };
 
 #endif

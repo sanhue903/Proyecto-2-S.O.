@@ -1,7 +1,6 @@
 #include "Runqueue.h"
 
-
-void process_scheduler(Runqueue&, Runqueue&);
+void process_scheduler(Runqueue&);
 
 int N = 10;
 int M = 4;
@@ -10,17 +9,17 @@ int M = 4;
 int main(){
     srand(time(NULL));
 
-    Runqueue activa, expirada;
+    Runqueue rq;
 
     Hebra_t procesos[N];
 
     for (auto i : procesos)
-        activa.add_process(i); 
+        rq.add_process(i); 
 
     std::vector<std::thread> hebras_e;
 
     for (size_t i = 0; i < M; i++)
-        hebras_e.emplace_back(std::thread(process_scheduler, std::ref(activa), std::ref(expirada)));
+        hebras_e.emplace_back(std::thread(process_scheduler, std::ref(rq)));
 
     for (size_t i = 0; i < M; i++)
         hebras_e[i].join(); 
@@ -28,26 +27,25 @@ int main(){
     return 0;
 }
 
-void process_scheduler(Runqueue& activa, Runqueue& expirada){
-    while(true){
-        
-        while(!activa.is_empty()){
-            Hebra_t aux{activa.pop_process()};
+void process_scheduler(Runqueue& rq) {
+    while (true) {
+        if (!rq.is_empty()) {
+            Hebra_t aux = rq.pop_process();
 
             aux.run_process();
 
-            if (!aux.has_finished()){
-                if (aux.get_priority() < NUM_PRIORITY)
+            if (!aux.has_finished()) {
+                if (aux.get_priority() < NUM_PRIORITY) {
                     aux.change_priority(aux.get_priority() + 1); 
-
-                expirada.add_process(aux);
+                }
+                rq.add_expired(aux);
             }
-        }
-
-        while(!expirada.is_empty()){
-            activa.add_process(expirada.pop_process());
+        } else if (!rq.is_expired_empty()) {
+            rq.swap();
+        } else {
+            std::cout << "No processes left, waiting for more...\n";
+            sleep(1);
         }
     }
-
 }
 
