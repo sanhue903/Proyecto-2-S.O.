@@ -6,7 +6,6 @@ Hebra_t::Hebra_t(){
     int new_time{(rand() + MIN_TIME) % MAX_TIME};
     this->time_process = millisec(new_time);
     this->priority = rand() % (NUM_PRIORITY); 
-
     this->id_process = count++;
 }
 
@@ -32,8 +31,12 @@ int Hebra_t::get_priority(){
 }
 
 
-bool Hebra_t::has_finished(){
-    return this->time_process.count() <= 0;
+bool Hebra_t::has_finished() {
+    if (this->time_process.count() <= 0) {
+        std::cout << "Finished running process " << id_process << "\n";
+        return true;
+    }
+    return false; 
 }
 
 int Hebra_t::getID(){
