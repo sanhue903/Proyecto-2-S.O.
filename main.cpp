@@ -1,10 +1,9 @@
 #include "Runqueue.h"
 
+const int N = 10;
+const int M = 4;
+
 void process_scheduler(Runqueue&);
-
-int N = 10;
-int M = 4;
-
 
 int main(){
     srand(time(NULL));
@@ -29,6 +28,7 @@ int main(){
 
 void process_scheduler(Runqueue& rq) {
     while (true) {
+
         if (!rq.is_empty()) {
             Hebra_t aux = rq.pop_process();
 
