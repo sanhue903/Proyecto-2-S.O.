@@ -1,43 +1,57 @@
 #include "Runqueue.h"
 
-Runqueue::Runqueue(){
-    for (size_t i = 0; i < NUM_PRIORITY;++i)
-        this->priority_queue.push_back(std::queue<Hebra_t>());
+Runqueue::Runqueue() {
+    swapped = false;
 }
 
-void Runqueue::add_process(Hebra_t process){
-    int priority{process.get_priority()};
+void Runqueue::add_process(Hebra_t* process){
+    int priority = process->get_priority();
 
-    this->mutex_runqueue.lock();
+    //std::lock_guard<std::mutex> mt(this->mutex_runqueue);
 
-    this->priority_queue[priority].push(process);
-
-    this->size++;
-
-    this->mutex_runqueue.unlock();
+    if (!swapped) {
+        active.push(process);
+    } else {
+        expired.push(process);
+    }
 }
 
-Hebra_t Runqueue::pop_process(){
+void Runqueue::add_expired(Hebra_t* process) {
+    if (!swapped) {
+        expired.push(process);
+    } else {
+        active.push(process);
+    }
+}
 
-
-    this->mutex_runqueue.lock();
-
-    if (this->priority_queue[in_priority].empty())
-        this->in_priority = (this->in_priority + 1)%NUM_PRIORITY;
-
-    Hebra_t process{this->priority_queue[in_priority].front()};
-    this->priority_queue[in_priority].pop();
-
-    this->size--;
-
-    this->mutex_runqueue.unlock();
-
+Hebra_t* Runqueue::pop_process(){
+    //std::lock_guard<std::mutex> mt(this->mutex_runqueue);
+    Hebra_t* process;
+    if (!swapped) {
+        process = this->active.top();
+        //std::cout << "popeando " << process.getID() << "-" << process.get_priority() << " tiempo:"<< process.get_time().count() << "ms" << "\n";
+        this->active.pop();
+    } else {
+        process = this->expired.top();
+        //std::cout << "popeando " << process.getID() << "-" << process.get_priority() << " tiempo:"<< process.get_time().count() << "ms" << "\n";
+        this->expired.pop();
+    }
     return process;
 }
 
 bool Runqueue::is_empty(){
-    if (this->size == 0)
-        return true;
+    //std::lock_guard<std::mutex> mt(this->mutex_runqueue);
+    return !swapped ? active.empty() : expired.empty();
+}
 
-    return false;
+bool Runqueue::is_expired_empty() {
+    return !swapped ? expired.empty() : active.empty();
+}
+
+int Runqueue::getSize() {
+    return !swapped ? active.size() : expired.size();
+}
+
+void Runqueue::swap() {
+    swapped = !swapped;
 }
