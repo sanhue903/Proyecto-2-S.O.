@@ -1,7 +1,7 @@
 #include "Runqueue.h"
 
-#define N 10    // Numero de hebras creadas inicialmente
-#define M 4     // Numero de CPUs
+#define N 10    // Numero de hebras creadas en cada ola de la hebra creadora de procesos
+#define M 4     // Numero de CPUs (Hebras Scheduler)
 
 std::mutex mtx;
 std::condition_variable cond;
@@ -23,6 +23,8 @@ int main() {
 
     for (size_t i = 0; i < M; i++)
         hebras_e[i].join(); 
+
+    creator_thread.join();
     
     return 0;
 }
