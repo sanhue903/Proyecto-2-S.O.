@@ -7,7 +7,6 @@ std::condition_variable cond;
 void process_scheduler(Runqueue&);
 void process_creator(Runqueue&, int);
 
-
 int main(int argc, char **argv) {
     srand(time(NULL));
 
@@ -18,15 +17,11 @@ int main(int argc, char **argv) {
     int M{(int)std::strtol(argv[1], nullptr, 0)}; // Numero de CPUs (Hebras Scheduler)
     int N{(int)std::strtol(argv[2], nullptr, 0)}; // Numero de hebras creadas en cada ola de la hebra creadora de procesos
 
-
     std::thread creator_thread(process_creator, std::ref(rq), N);
     
     for (size_t i = 0; i < M; i++)
         hebras_e.emplace_back(std::thread(process_scheduler, std::ref(rq)));
     
-     
-
-
     for (size_t i = 0; i < M; i++)
         hebras_e[i].join(); 
 
@@ -44,7 +39,6 @@ void process_scheduler(Runqueue& rq) {
 
             aux->run_process();
             
-            
             if (!aux->has_finished()) {
                 aux->change_priority(); 
                 
@@ -53,11 +47,10 @@ void process_scheduler(Runqueue& rq) {
                 rq.add_expired(aux);
 
                 locker.unlock();
-            }
-            else
+            } else {
                 delete aux;
-
-            
+            }
+                
         } else if (!rq.is_expired_empty()) {
             rq.swap();
             locker.unlock();
